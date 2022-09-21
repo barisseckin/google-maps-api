@@ -23,7 +23,4 @@ public class ResultDtoConverter {
         );
     }
 
-    public List<ResultDto> convert(List<Result> results) {
-        return results.stream().map(this::convert).collect(Collectors.toList());
-    }
 }

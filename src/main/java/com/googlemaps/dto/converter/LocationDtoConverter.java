@@ -16,8 +16,4 @@ public class LocationDtoConverter {
                 location.getLongitude()
         );
     }
-
-    public List<LocationDto> convert(List<Location> locations) {
-        return locations.stream().map(this::convert).collect(Collectors.toList());
-    }
 }

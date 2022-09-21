@@ -22,7 +22,7 @@ import java.util.List;
 public class GoogleMapsService {
 
     @Value("${google.maps.api.key}")
-    String googleApiKey;
+    private String googleApiKey;
 
     private final RestTemplate restTemplate;
     private final PlaceResponseDtoConverter placeResponseDtoConverter;
@@ -37,7 +37,6 @@ public class GoogleMapsService {
                 + "&types=food&key=" + googleApiKey;
 
         GoogleResponse response = restTemplate.getForObject(URL, GoogleResponse.class);
-
         List<PlaceResponseDto> responseDto = placeResponseDtoConverter.convertGoogleResponseToPlaceResponse(response);
 
         for (PlaceResponseDto result : responseDto) {
@@ -48,6 +47,7 @@ public class GoogleMapsService {
                 placeResponseRepository.save(placeResponse);
                 return placeResponseDtoConverter.convertGoogleResponseToPlaceResponse(response);
             }
+            log.warn(result + " exist");
             throw new PlaceExistException(result + "exist");
         }
         return null;

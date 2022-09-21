@@ -27,10 +27,6 @@ public class PlaceResponseDtoConverter {
         );
     }
 
-    public List<PlaceResponseDto> convert(List<PlaceResponse> placeResponses) {
-        return placeResponses.stream().map(this::convert).collect(Collectors.toList());
-    }
-
     public List<PlaceResponseDto> convertGoogleResponseToPlaceResponse(GoogleResponse response) {
 
         List<PlaceResponseDto> result = new ArrayList<>();
