@@ -20,4 +20,11 @@ public class PlaceResponse {
     private String name;
     private Double rating;
     private String vicinity;
+
+    public PlaceResponse(Location location, String name, Double rating, String vicinity) {
+        this.location = location;
+        this.name = name;
+        this.rating = rating;
+        this.vicinity = vicinity;
+    }
 }

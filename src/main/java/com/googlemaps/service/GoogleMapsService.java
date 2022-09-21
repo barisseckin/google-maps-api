@@ -3,7 +3,10 @@ package com.googlemaps.service;
 import com.googlemaps.dto.PlaceResponseDto;
 import com.googlemaps.dto.converter.PlaceResponseDtoConverter;
 import com.googlemaps.dto.request.SendRequest;
+import com.googlemaps.exception.PlaceExistException;
 import com.googlemaps.model.GoogleResponse;
+import com.googlemaps.model.Location;
+import com.googlemaps.model.PlaceResponse;
 import com.googlemaps.repository.PlaceResponseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +22,7 @@ import java.util.List;
 public class GoogleMapsService {
 
     @Value("${google.maps.api.key}")
-    private final String googleApiKey;
+    String googleApiKey;
 
     private final RestTemplate restTemplate;
     private final PlaceResponseDtoConverter placeResponseDtoConverter;
@@ -29,13 +32,25 @@ public class GoogleMapsService {
 
         String URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
                 + "?location=" + request.getLatitude()
-                + "," + request.getLongitude() + "&radius="
-                + request.getRadius() + "&types=food&key="
-                + googleApiKey;
+                + "," + request.getLongitude()
+                + "&radius=" + request.getRadius()
+                + "&types=food&key=" + googleApiKey;
 
         GoogleResponse response = restTemplate.getForObject(URL, GoogleResponse.class);
 
+        List<PlaceResponseDto> responseDto = placeResponseDtoConverter.convertGoogleResponseToPlaceResponse(response);
 
-        return placeResponseDtoConverter.convertGoogleResponseToPlaceResponse(response);
+        for (PlaceResponseDto result : responseDto) {
+            if (!placeResponseRepository.existsByName(result.getName())) {
+                PlaceResponse placeResponse = new PlaceResponse(new Location(result.getLocationDto().getLongitude(), result.getLocationDto().getLatitude()),
+                        result.getName(), result.getRating(), result.getVicinity());
+
+                placeResponseRepository.save(placeResponse);
+                return placeResponseDtoConverter.convertGoogleResponseToPlaceResponse(response);
+            }
+            throw new PlaceExistException(result + "exist");
+        }
+        return null;
     }
 }
+

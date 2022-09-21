@@ -4,4 +4,5 @@ import com.googlemaps.model.PlaceResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlaceResponseRepository extends JpaRepository<PlaceResponse, Integer> {
+    boolean existsByName(String name);
 }

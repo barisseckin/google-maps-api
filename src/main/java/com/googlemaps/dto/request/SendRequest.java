@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SendRequest {
-    private String longitude;
-    private String latitude;
-    private String radius;
+    private double longitude;
+    private double latitude;
+    private double radius;
 }
